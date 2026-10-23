@@ -6,7 +6,7 @@ pipeline {
     }
 
     tools {
-        nodejs 'NodeJS-24'
+        nodejs 'NodeJS-1.6.6'
     }
 
     options {
