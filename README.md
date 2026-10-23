@@ -1,3 +1,4 @@
 # Jenkins Pipeline Demo
 
-A project for learning Jenkins CI/CD with Linux and GitHub.`
+A project for learning Jenkins CI/CD with Linux and GitHub.
+I think this is it
