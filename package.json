@@ -1,0 +1,14 @@
+{
+  "name": "jenkins-pipeline-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node.js app for learning Jenkins CI",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --test",
+    "build": "mkdir -p dist && cp app.js dist/app.js"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

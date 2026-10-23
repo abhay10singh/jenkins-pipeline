@@ -1,9 +1,13 @@
 pipeline {
     agent any
-	
+
     triggers {
-       pollSCM('H/5 * * * *')
-	}
+        pollSCM('H/2 * * * *')
+    }
+
+    tools {
+        nodejs 'NodeJS-24'
+    }
 
     options {
         timestamps()
@@ -12,35 +16,38 @@ pipeline {
     stages {
         stage('Verify Environment') {
             steps {
-                sh 'uname -a'
-                sh 'git --version'
-                sh 'echo "Jenkins environment verified"'
+                sh 'node --version'
+                sh 'npm --version'
             }
         }
 
-        stage('Validate Source') {
+        stage('Install Dependencies') {
             steps {
-                sh 'test -f README.md'
-                sh 'test -f Jenkinsfile'
-                sh 'echo "Required files found"'
+                sh 'npm ci'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mkdir -p build'
-                sh 'printf "Build number: %s\n" "$BUILD_NUMBER" > build/build-info.txt'
-                sh 'cat build/build-info.txt'
+                sh 'npm run build'
+                archiveArtifacts artifacts: 'dist/**',
+                                 fingerprint: true
             }
         }
     }
 
     post {
         success {
-            echo 'CI checks passed!'
+            echo 'CI passed: tests and build completed.'
         }
         failure {
-            echo 'Pipeline failed. Check the console output.'
+            echo 'CI failed. Inspect the stage logs.'
         }
     }
 }
