@@ -9,6 +9,10 @@ pipeline {
         nodejs 'NodeJS-26'
     }
 
+    environment {
+        ACR_LOGIN_SERVER = 'taskflowacr1792851774-ade2bqchgngyhag5.azurecr.io'
+    }
+
     options {
         timestamps()
     }
@@ -40,21 +44,44 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Push to ACR') {
             steps {
-                sh 'docker build --pull -t taskflow:${BUILD_NUMBER} -t taskflow:latest .'
-                sh 'docker image inspect taskflow:${BUILD_NUMBER} >/dev/null'
-                echo 'Docker image built successfully.'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'acr-sp-credentials',
+                        usernameVariable: 'ACR_USERNAME',
+                        passwordVariable: 'ACR_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+                        set -eu
+
+                        printf '%s' "$ACR_PASSWORD" |
+                          docker login "$ACR_LOGIN_SERVER" \
+                            --username "$ACR_USERNAME" \
+                            --password-stdin
+
+                        trap 'docker logout "$ACR_LOGIN_SERVER" >/dev/null 2>&1 || true' EXIT
+
+                        docker build --pull \
+                          -t "$ACR_LOGIN_SERVER/taskflow:$BUILD_NUMBER" \
+                          -t "$ACR_LOGIN_SERVER/taskflow:latest" .
+
+                        docker push "$ACR_LOGIN_SERVER/taskflow:$BUILD_NUMBER"
+                        docker push "$ACR_LOGIN_SERVER/taskflow:latest"
+                    '''
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'CI passed: tests succeeded and Docker image was built.'
+            echo 'CI passed: tests completed and image published to ACR.'
         }
         failure {
-            echo 'CI failed. Inspect Console Output.'
+            echo 'CI failed. Check the Console Output.'
         }
     }
 }
