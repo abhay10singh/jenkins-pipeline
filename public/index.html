@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7fb">
+    <title>TaskFlow | Task Manager</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">
+            <span class="brand-mark">✓</span>
+            <span>TaskFlow <small>PERSONAL WORKSPACE</small></span>
+        </a>
+        <span id="api-status" class="api-status">Connecting to API…</span>
+    </header>
+
+    <main class="shell">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">YOUR DAY, ORGANIZED</p>
+                <h1>Make progress<br>visible.</h1>
+                <p class="hero-copy">
+                    Keep track of what matters. Add a task, make progress,
+                    and clear the queue.
+                </p>
+            </div>
+            <div class="hero-note">
+                <span class="hero-note-icon">✦</span>
+                <p><strong>Small steps count.</strong><br>
+                One task at a time.</p>
+            </div>
+        </section>
+
+        <section class="stats" aria-label="Task statistics">
+            <article class="stat-card">
+                <span>Total tasks</span>
+                <strong id="total-count">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>In progress</span>
+                <strong id="active-count">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>Completed</span>
+                <strong id="completed-count">0</strong>
+            </article>
+        </section>
+
+        <section class="workspace">
+            <aside class="panel create-panel">
+                <p class="eyebrow">GET STARTED</p>
+                <h2>Create a task</h2>
+                <p class="muted">Turn your next step into something actionable.</p>
+
+                <form id="task-form">
+                    <label for="title">Task title</label>
+                    <input id="title" name="title" type="text"
+                           placeholder="e.g. Finish the API tests"
+                           maxlength="120" required>
+
+                    <label for="description">Description <span>(optional)</span></label>
+                    <textarea id="description" name="description"
+                              rows="4" maxlength="500"
+                              placeholder="Add a little context…"></textarea>
+
+                    <button class="primary-button" type="submit">
+                        <span>＋</span> Add task
+                    </button>
+                </form>
+
+                <p class="form-footnote">Tasks are saved locally on the server.</p>
+            </aside>
+
+            <section class="panel task-panel">
+                <div class="list-heading">
+                    <div>
+                        <p class="eyebrow">YOUR WORKSPACE</p>
+                        <h2>Your tasks</h2>
+                        <p id="task-count" class="muted">Loading tasks…</p>
+                    </div>
+                    <select id="status-filter" aria-label="Filter tasks">
+                        <option value="all">All tasks</option>
+                        <option value="active">In progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+
+                <input id="search-input" class="search-input" type="search"
+                       placeholder="Search tasks…" aria-label="Search tasks">
+
+                <ul id="task-list" class="task-list" aria-live="polite"></ul>
+            </section>
+        </section>
+
+        <footer>
+            <span>TaskFlow · Node.js + Express</span>
+            <span>API <code>/api/tasks</code></span>
+        </footer>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

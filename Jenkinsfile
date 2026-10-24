@@ -27,27 +27,31 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Validate Code') {
+            steps {
+                sh 'npm run check'
+            }
+        }
+
+        stage('Test API') {
             steps {
                 sh 'npm test'
             }
         }
 
-        stage('Build') {
+        stage('Package') {
             steps {
-                sh 'npm run build'
-                archiveArtifacts artifacts: 'dist/**',
-                                 fingerprint: true
+                sh 'npm pack --dry-run'
             }
         }
     }
 
     post {
         success {
-            echo 'CI passed: tests and build completed.'
+            echo 'CI passed: API validation and tests succeeded.'
         }
         failure {
-            echo 'CI failed. Inspect the stage logs.'
+            echo 'CI failed. Check the failing stage in Console Output.'
         }
     }
 }

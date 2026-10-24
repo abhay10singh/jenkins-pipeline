@@ -1,14 +1,22 @@
 {
-  "name": "jenkins-pipeline-demo",
+  "name": "jenkins-task-manager",
   "version": "1.0.0",
   "private": true,
-  "description": "Node.js app for learning Jenkins CI",
-  "main": "app.js",
+  "description": "Task Manager API and web UI for Jenkins CI/CD practice",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "test": "node --test",
-    "build": "mkdir -p dist && cp app.js dist/app.js"
+    "check": "node --check server.js && node --check src/app.js && node --check src/store.js && node --check public/app.js"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.1"
   }
 }
