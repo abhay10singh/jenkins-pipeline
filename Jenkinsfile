@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        pollSCM('H/2 * * * *')
+        pollSCM('H/5 * * * *')
     }
 
     tools {
@@ -18,6 +18,7 @@ pipeline {
             steps {
                 sh 'node --version'
                 sh 'npm --version'
+                sh 'docker version'
             }
         }
 
@@ -39,19 +40,21 @@ pipeline {
             }
         }
 
-        stage('Package') {
+        stage('Build Docker Image') {
             steps {
-                sh 'npm pack --dry-run'
+                sh 'docker build --pull -t taskflow:${BUILD_NUMBER} -t taskflow:latest .'
+                sh 'docker image inspect taskflow:${BUILD_NUMBER} >/dev/null'
+                echo 'Docker image built successfully.'
             }
         }
     }
 
     post {
         success {
-            echo 'CI passed: API validation and tests succeeded.'
+            echo 'CI passed: tests succeeded and Docker image was built.'
         }
         failure {
-            echo 'CI failed. Check the failing stage in Console Output.'
+            echo 'CI failed. Inspect Console Output.'
         }
     }
 }
